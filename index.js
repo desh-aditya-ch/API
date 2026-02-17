@@ -6,47 +6,40 @@ const port=5500;
 
 app.use(express.json());
 
-let comments=[];
+const posts = [
+    { id: 101, title: "System Design 101" },
+    { id: 102, title: "Node.js Tips" }
+];
 
-app.post('/comments',(req,res)=>{
-    const {username,comment_text}=req.body;
 
-    const newComment={
-        id:comments.length+1,
-        username:username,
-        comment_text:comment_text
+const comments = [
+    { id: 1, postId: 101, text: "Great post!" },
+    { id: 2, postId: 101, text: "Very helpful, thanks." },
+    { id: 3, postId: 102, text: "I love Express!" }
+];
 
-    };
 
-    comments.push(newComment);
+app.get("/post/:postId/comments",(req,res)=>{
+    const postId=parseInt(req.params.postId);
 
-    res.status(201).send(newComment);
-})
+    const postComments=comments.filter(c=>c.postId===postId);
 
-app.get('/comments/:id',(req,res)=>{
-    const id=parseInt(req.params.id);
-    const comment=comments.find(c=> c.id===id);
+    res.json(postComments)
+});
 
-    if(!comment){
-        return res.status(400).json({"message":"coment not found"})
+app.get("/comments",(req,res)=>{
+    const {postId}=req.query;
+
+
+    if(postId){
+        const postIdNum=parseInt(postId)
+        const filteredComments=comments.filter(c=> c.postId===postIdNum);
+        return res.json(filteredComments);
     }
-
-    res.status(200).json(comment);
 })
-
-app.delete('/comments/:id',(req,res)=>{
-    const id=parseInt(req.params.id);
-
-    comments=comments.filter(c=>c.id !== id)
-
-    res.status(204).send()
-})
-
-
-
 
 app.listen(
-    port, 
-    ()=>{console.log(`server running at http://localhost:${port}`);
+    port,
+    ()=>{console.log("server running at http://localhost:5500");
     }
 );
