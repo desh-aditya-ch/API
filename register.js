@@ -15,7 +15,7 @@ const validateJsonHeader=(req,res,next)=>{
             error:"content-type is Incorrect"
         })
     }
-    next();
+    next(); 
 }
 
 
